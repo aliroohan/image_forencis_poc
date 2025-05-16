@@ -1,0 +1,100 @@
+/* image-visualizer.component.scss */
+.card {
+    @apply rounded-lg shadow-md overflow-hidden bg-white;
+  }
+  
+  .card-header {
+    @apply p-4;
+  }
+  
+  .card-title {
+    @apply text-xl font-bold;
+  }
+  
+  .card-content {
+    @apply p-4;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 rounded text-white transition-colors;
+  }
+  
+  .btn-outline {
+    @apply px-4 py-2 rounded border border-gray-300 transition-colors hover:bg-gray-100 flex items-center gap-1;
+  }
+  
+  /* You would need to define these Tailwind-like utility classes in your Angular styles */
+  .bg-mashreq-orange {
+    background-color: #F39C12;
+  }
+  
+  .bg-mashreq-light {
+    background-color: #FEF5E7;
+  }
+  
+  .text-mashreq-orange {
+    color: #F39C12;
+  }
+  
+  /* Switch toggle styles */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #F39C12;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+  /* Animation for fade in */
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  

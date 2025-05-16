@@ -1,0 +1,26 @@
+<!-- image-magnifier.component.html -->
+<div 
+  class="relative inline-block"
+  [style.width]="width"
+  (mousemove)="handleMouseMove($event)"
+>
+  <img
+    #imgRef
+    [src]="src"
+    alt="Original image"
+    class="w-full h-auto object-contain border border-gray-200"
+  />
+  
+  <div
+    *ngIf="showMagnifier"
+    class="absolute pointer-events-none border-2 border-mashreq-orange rounded-full shadow-lg overflow-hidden"
+    [style.width.px]="150"
+    [style.height.px]="150"
+    [style.top.px]="position.y - 75"
+    [style.left.px]="position.x - 75"
+    [style.background]="'url(' + src + ')'"
+    [style.backgroundPosition]="cursorPosition.x * zoomLevel + '% ' + cursorPosition.y * zoomLevel + '%'"
+    [style.backgroundSize]="zoomLevel * 100 + '%'"
+    [style.zIndex]="10"
+  ></div>
+</div>

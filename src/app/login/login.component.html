@@ -1,1 +1,19 @@
-<p>login works!</p>
+<main>
+    <div class="background">
+        <div class="card">
+            <h1>Sign In</h1>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <input type="email" formControlName="email" placeholder="Email" />
+                <input type="password" formControlName="password" placeholder="Password" />
+                <div class="options">
+
+                </div>
+                <button class="sign-in-btn" type="submit" [disabled]="!loginForm.valid">Sign In</button>
+                <p *ngIf="errorMessage" class="error-message">{{errorMessage}}</p>
+            </form>
+            <div class="signup-link">
+                <span (click)="navigateToSignup()">Don't have an account?</span>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,166 @@
+<!-- image-visualizer.component.html -->
+<div class="container mx-auto px-4 py-6">
+  <div class="card mb-6">
+    <div class="card-header bg-mashreq-dark">
+      <div class="header-content">
+        <div class="logo-container">
+          <img src="/companylogo.svg" alt="Company Logo" class="company-logo">
+        </div>
+        <div class="header-text">
+          <div class="text-white flex items-center">
+             Image Forensic & Fraud Detection Tool
+          </div>
+        </div>
+        <div class="signout-container">
+          <button class="signout-btn items-center" (click)="signOut()">
+             Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-content pt-6">
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Left Column: Upload + Results -->
+        <div class="flex flex-col gap-6 md:w-1/3 w-full">
+          <!-- Upload Area (always visible) -->
+          <div class="upload-area">
+            <div class="upload-box" (click)="triggerFileInput()" (drop)="handleDrop($event)" (dragover)="onDragOver($event)">
+              <div class="flex flex-col items-center justify-center h-full">
+                <i class="lucide-upload" style="font-size: 32px; color: #F39C12;"></i>
+                <div class="mt-2 text-gray-600">Drop Image Here<br>- or -<br><span class="text-mashreq-orange font-medium">Click to Upload</span></div>
+              </div>
+              <input type="file" accept="image/*" class="hidden" #fileInput (change)="handleFileUpload($event)">
+            </div>
+          </div>
+          <!-- Analyze Button -->
+          <div *ngIf="originalImage && !isLoading" class="flex justify-center mb-2">
+            <button class="btn-primary bg-mashreq-orange hover:bg-mashreq-dark flex items-center gap-2" (click)="analyzeImage()">
+              <i class="lucide-search"></i> Analyze Image
+            </button>
+          </div>
+          <!-- Manipulation Analysis Results (always below upload) -->
+          <div *ngIf="originalImage && !isLoading" class="results-card bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Manipulation Analysis Results</h2>
+            <div class="mb-4">
+              <span class="font-medium">Overall Assessment:</span>
+              <span class="text-mashreq-orange font-semibold">{{analysisResult.overallAssessment}}</span>
+            </div>
+            <div class="mb-4">
+              <span>{{analysisResult.summary}}</span>
+            </div>
+            <div class="mb-4">
+              <h3 class="font-medium mb-1">Manipulation Probability</h3>
+              <div class="flex items-center gap-2">
+                <span class="text-gray-600">0</span>
+                <input type="range" min="0" max="1" step="0.01" [value]="analysisResult.manipulationProbability || 0" disabled class="prob-slider">
+                <span class="text-mashreq-orange font-bold">{{(analysisResult.manipulationProbability * 100) | number:'1.1-1'}}%</span>
+              </div>
+            </div>
+            <div class="mb-4">
+              <h3 class="font-medium mb-1">Clone Detection Analysis</h3>
+              <span>{{analysisResult.cloneDetection}}</span>
+            </div>
+            <div class="mb-4">
+              <h3 class="font-medium mb-1">EXIF Metadata Analysis</h3>
+              <span>{{analysisResult.exifAnalysis}}</span>
+            </div>
+            <div>
+              <h3 class="font-medium mb-1">Indicators found:</h3>
+              <span>{{analysisResult.indicatorsFound}}</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right Column: Tabs and Tab Content -->
+        <div class="flex-1 w-full">
+          <!-- Tab Bar -->
+          <div class="flex border-b border-gray-200 mb-4">
+            <button class="tab-btn" [class.active]="activeTab === 'original'" (click)="activeTab = 'original'">Original Image</button>
+            <button class="tab-btn" [class.active]="activeTab === 'ela'" (click)="activeTab = 'ela'">Error Level Analysis (ELA)</button>
+            <button class="tab-btn" [class.active]="activeTab === 'noise'" (click)="activeTab = 'noise'">Noise Analysis</button>
+            <button class="tab-btn" [class.active]="activeTab === 'clone'" (click)="activeTab = 'clone'">Clone Detection</button>
+            <button class="tab-btn" [class.active]="activeTab === 'ai'" (click)="activeTab = 'ai'">AI Detection Heatmap</button>
+          </div>
+          <!-- Loading Spinner -->
+          <div *ngIf="isLoading" class="text-center py-8">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-mashreq-orange border-r-transparent"></div>
+            <p class="mt-2 text-gray-600">Processing image...</p>
+          </div>
+          <!-- Tab Content -->
+          <div *ngIf="originalImage && !isLoading">
+            <div [ngSwitch]="activeTab">
+              <!-- Original Image Tab -->
+              <div *ngSwitchCase="'original'">
+                <div class="flex flex-col items-center">
+                  <h3 class="text-lg font-medium mb-2">Original Image</h3>
+                  <app-image-magnifier [src]="originalImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
+                </div>
+              </div>
+              <!-- ELA Tab -->
+              <div *ngSwitchCase="'ela'">
+                <div class="flex flex-col items-center">
+                  <h3 class="text-lg font-medium mb-2">Error Level Analysis (ELA)</h3>
+                  <app-image-magnifier *ngIf="elaImage" [src]="elaImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
+                  <div *ngIf="!elaImage" class="text-gray-400">ELA result will appear here after analysis.</div>
+                </div>
+              </div>
+              <!-- Noise Analysis Tab -->
+              <div *ngSwitchCase="'noise'">
+                <div class="flex flex-col items-center">
+                  <h3 class="text-lg font-medium mb-2">Noise Analysis</h3>
+                  <app-image-magnifier *ngIf="noiseImage" [src]="noiseImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
+                  <div *ngIf="!noiseImage" class="text-gray-400">Noise analysis result will appear here after analysis.</div>
+                </div>
+              </div>
+              <!-- Clone Detection Tab -->
+              <div *ngSwitchCase="'clone'">
+                <div class="flex flex-col items-center">
+                  <h3 class="text-lg font-medium mb-2">Clone Detection</h3>
+                  <app-image-magnifier *ngIf="cloneImage" [src]="cloneImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
+                  <div *ngIf="!cloneImage" class="text-gray-400">Clone detection result will appear here after analysis.</div>
+                </div>
+              </div>
+              <!-- AI Detection Heatmap Tab -->
+              <div *ngSwitchCase="'ai'">
+                <div class="flex flex-col items-center">
+                  <h3 class="text-lg font-medium mb-2">AI Detection Heatmap</h3>
+                  <app-image-magnifier *ngIf="aiHeatmapImage" [src]="aiHeatmapImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
+                  <div *ngIf="!aiHeatmapImage" class="text-gray-400">AI detection heatmap will appear here after analysis.</div>
+                </div>
+              </div>
+            </div>
+            <!-- Fixed Zoom Controls at Bottom -->
+            <div class="fixed-zoom-controls">
+              <div class="zoom-controls">
+                <div class="flex items-center justify-between">
+                  <div class="zoom-label">Image Zoom</div>
+                  <div class="flex items-center gap-4">
+                    <button 
+                      class="zoom-btn" 
+                      (click)="decreaseZoom()" 
+                      [disabled]="zoomLevel <= 1"
+                      [class.disabled]="zoomLevel <= 1"
+                      title="Decrease Zoom">
+                      <span class="text-mashreq-orange font-bold">−</span>
+                    </button>
+                    <div class="zoom-level">
+                      {{zoomLevel}}x
+                    </div>
+                    <button 
+                      class="zoom-btn" 
+                      (click)="increaseZoom()" 
+                      [disabled]="zoomLevel >= 10"
+                      [class.disabled]="zoomLevel >= 10"
+                      title="Increase Zoom">
+                      <span class="text-mashreq-orange font-bold">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+</div>
+  

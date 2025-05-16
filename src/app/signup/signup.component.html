@@ -1,0 +1,40 @@
+<main>
+  <div class="background">
+    <div class="card">
+      <h1>Sign Up</h1>
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <input type="text" formControlName="name" placeholder="Name" />
+        <input type="text" formControlName="username" placeholder="Username" />
+        <input type="email" formControlName="email" placeholder="Email" />
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <div class="password-requirements">
+          <p class="requirement" [class.valid]="hasMinLength()">
+            At least 8 characters long
+          </p>
+          <p class="requirement" [class.valid]="hasLetter()">
+            Contains at least one letter
+          </p>
+          <p class="requirement" [class.valid]="hasNumber()">
+            Contains at least one number
+          </p>
+        </div>
+       
+        <button
+          class="sign-in-btn"
+          type="submit"
+          [disabled]="!signupForm.valid"
+        >
+          Sign Up
+        </button>
+        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      </form>
+      <div class="signup-link">
+        <span>Already have an account?</span>
+      </div>
+    </div>
+  </div>
+</main>
