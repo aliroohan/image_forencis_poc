@@ -1,5 +1,7 @@
-
 /* Scrollable right column for tab content */
+.zoom {
+  display: flex;
+}
 .flex-1 {
     max-height: calc(100vh - 120px);
     padding-bottom: 2rem;
@@ -11,7 +13,6 @@
     .card-content {
       flex-direction: column !important;
       min-width: 0;
-      padding: 0.5rem !important;
       width: 100% !important;
       max-width: 100% !important;
       margin: 0 !important;
@@ -150,10 +151,10 @@
   }
   
   .fixed-zoom-controls {
-    position: fixed;
+    
     bottom: 2rem;
     left: 50%;
-    transform: translateX(-50%);
+    
     z-index: 1000;
     width: 100%;
     max-width: 400px;
@@ -379,20 +380,13 @@
     text-align: center;
     margin-bottom: 1.5rem;
   }
-  
-  @keyframes pulse {
+
+  @keyframes spin {
     0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
+      transform: rotate(0deg);
     }
     100% {
-      transform: scale(1);
+      transform: rotate(360deg);
     }
-  }
-  
-  .pulse {
-    animation: pulse 2s infinite;
   }
   

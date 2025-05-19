@@ -1,6 +1,6 @@
 <!-- image-visualizer.component.html -->
 <div class="container mx-auto px-4 py-6">
-  <div class="card mb-6">
+  <div class="card">
     <div class="card-header bg-mashreq-dark">
       <div class="header-content">
         <div class="logo-container">
@@ -36,7 +36,7 @@
           </div>
           <!-- Analyze Button -->
           <div *ngIf="originalImage && !isLoading" class="flex justify-center mb-2">
-            <button class="btn-primary bg-mashreq-orange flex items-center gap-2" style="border: none;" (click)="analyzeImage()">
+            <button class="btn-primary bg-mashreq-orange flex items-center gap-2" style="border: none; cursor: pointer;" (click)="analyzeImage()">
                Analyze Image
             </button>
           </div>
@@ -101,7 +101,7 @@
             </div>
           </div>
           <!-- Tab Content -->
-          <div *ngIf="originalImage && !isLoading">
+          <div style="display: flex; flex-direction: column; align-items: center;" *ngIf="originalImage && !isLoading">
             <div [ngSwitch]="activeTab">
               <!-- Original Image Tab -->
               <div *ngSwitchCase="'original'">
@@ -148,7 +148,7 @@
               <div class="zoom-controls">
                 <div class="flex items-center justify-between">
                   <div class="zoom-label">Image Zoom</div>
-                  <div class="flex items-center gap-4">
+                  <div class="zoom items-center gap-4">
                     <button 
                       class="zoom-btn" 
                       (click)="decreaseZoom()" 
