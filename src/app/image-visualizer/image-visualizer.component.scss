@@ -500,6 +500,7 @@ app-root,
 .container {
   height: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .container {
@@ -511,6 +512,7 @@ app-root,
   display: flex;
   align-items: stretch;
   background: #f9fafb;
+  overflow-y: auto;
 }
 
 .card {
@@ -522,6 +524,7 @@ app-root,
   background: #fff;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .card-header {
@@ -531,10 +534,11 @@ app-root,
 
 .card-content {
   flex: 1 1 0;
-  padding: 2rem 2.5rem;
+  padding: 2rem 2.5rem 6rem 2.5rem;
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
 }
 
 .flex {
@@ -627,6 +631,17 @@ app-root,
   margin: 0 0.5rem;
 }
 
+.fixed-zoom-controls {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 1rem;
+}
+
 .zoom-controls {
   background: #fff;
   padding: 0.75rem 1.25rem;
@@ -634,7 +649,8 @@ app-root,
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
   width: 100%;
-  max-width: 400px;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.95);
 
   .zoom-btn {
     width: 36px;

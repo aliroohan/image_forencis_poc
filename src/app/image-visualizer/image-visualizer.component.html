@@ -102,7 +102,7 @@
           </div>
           <!-- Tab Content -->
           <div style="display: flex; flex-direction: column; align-items: center;" *ngIf="originalImage && !isLoading">
-            <div [ngSwitch]="activeTab">
+            <div [ngSwitch]="activeTab" >
               <!-- Original Image Tab -->
               <div *ngSwitchCase="'original'">
                 <div class="flex flex-col items-center">

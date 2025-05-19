@@ -47,35 +47,9 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.overflow-hidden {
-  overflow: hidden;
-}
 
-/* image-visualizer.component.scss */
-.card {
-    @apply rounded-lg shadow-md overflow-hidden bg-white;
-  }
-  
-  .card-header {
-    @apply p-4;
-  }
-  
-  .card-title {
-    @apply text-xl font-bold;
-  }
-  
-  .card-content {
-    @apply p-4;
-  }
-  
-  .btn-primary {
-    @apply px-4 py-2 rounded text-white transition-colors;
-  }
-  
-  .btn-outline {
-    @apply px-4 py-2 rounded border border-gray-300 transition-colors hover:bg-gray-100 flex items-center gap-1;
-  }
-  
+
+\  
   /* You would need to define these Tailwind-like utility classes in your Angular styles */
   .bg-mashreq-orange {
     background-color: #F39C12;
