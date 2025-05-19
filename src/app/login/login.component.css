@@ -40,7 +40,9 @@ form {
 }
 
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="text"] 
+ {
     width: 100%;
     padding: 0.7rem 1rem;
     border: 1px solid #eee;
@@ -52,7 +54,8 @@ input[type="password"] {
 }
 
 input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="text"]:focus {
     border: 1.5px solid #ff9800;
 }
 
@@ -111,4 +114,26 @@ input[type="password"]:focus {
     color: #e53935;
     margin-top: 0.5rem;
     text-align: center;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #ff9800;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px;
+}
+
+.toggle-password:hover {
+    text-decoration: underline;
 }

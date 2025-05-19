@@ -280,21 +280,19 @@
   @media (max-width: 768px) {
     .header-content {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: centert;
       gap: 1rem;
     }
   
     .logo-container {
       margin-right: 0;
-      margin-bottom: 1rem;
     }
   
     .signout-container {
       margin-left: 0;
-      width: 100%;
   
       .signout-btn {
-        width: 100%;
+        align-items: center;
         justify-content: center;
       }
     }

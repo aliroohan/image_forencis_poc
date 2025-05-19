@@ -4,7 +4,14 @@
             <h1>Sign In</h1>
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <input type="email" formControlName="email" placeholder="Email" />
-                <input type="password" formControlName="password" placeholder="Password" />
+                <div class="password-container">
+                    <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password" />
+                    <button type="button" class="toggle-password" (click)="togglePassword()">
+                        <span class="material-symbols-outlined">
+                            {{showPassword ? "visibility_off" : "visibility"}}
+                        </span>
+                    </button>
+                </div>
                 <div class="options">
 
                 </div>

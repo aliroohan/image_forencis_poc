@@ -118,7 +118,7 @@ export class ImageVisualizerComponent implements OnInit {
 
   signOut(): void {
     localStorage.removeItem('user');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
     console.log('Signing out...');
    
   }
@@ -319,6 +319,6 @@ export class ImageVisualizerComponent implements OnInit {
 
   private showToast(message: string, type: 'success' | 'error' | 'info'): void {
     console.log(`${type}: ${message}`);
-    // Here you would call your toast service
+
   }
 }

@@ -14,6 +14,8 @@ import { AuthService } from '../Services/auth.service';
 export class SignupComponent {
   signupForm: FormGroup;
   errorMessage: string = '';
+  showSuccessMessage: boolean = false;
+  showPassword: boolean = false;
 
   constructor(private formBuilder: FormBuilder, 
     private router: Router,
@@ -64,7 +66,10 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       this.authService.register(this.signupForm.value).subscribe((res: any) => {
         console.log(res);
-        this.router.navigate(['/login']);
+        this.showSuccessMessage = true;
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
       }, (err: any) => {
         this.errorMessage = err.error.message;
       });
@@ -74,5 +79,9 @@ export class SignupComponent {
   }
   onLogin() {
     this.router.navigate(['/login']);
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }

@@ -3,14 +3,24 @@
     <div class="card">
       <h1>Sign Up</h1>
       <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <div class="success-message" *ngIf="showSuccessMessage">
+          Registration Successful!
+        </div>
         <input type="text" formControlName="name" placeholder="Name" />
         <input type="text" formControlName="username" placeholder="Username" />
         <input type="email" formControlName="email" placeholder="Email" />
-        <input
-          type="password"
-          formControlName="password"
-          placeholder="Password"
-        />
+        <div class="password-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Password"
+          />
+          <button type="button" class="toggle-password" (click)="togglePassword()">
+            <span class="material-symbols-outlined">
+              {{showPassword ? "visibility_off" : "visibility"}}
+              </span>
+          </button>
+        </div>
         <div class="password-requirements">
           <p class="requirement" [class.valid]="hasMinLength()">
             At least 8 characters long

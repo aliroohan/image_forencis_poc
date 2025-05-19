@@ -134,3 +134,46 @@ input[type="text"]:focus {
   content: "•";
   margin-right: 8px;
 }
+
+.success-message {
+  background-color: #ff9800;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #ff9800;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 5px;
+}
+
+.toggle-password:hover {
+  text-decoration: underline;
+}

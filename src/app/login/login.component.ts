@@ -12,6 +12,7 @@ import { AuthService } from '../Services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  showPassword: boolean = false;
 
   constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService) {
     this.loginForm = this.formBuilder.group({
@@ -39,4 +40,7 @@ export class LoginComponent {
     this.router.navigate(['/signup']);
   }
 
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 }
