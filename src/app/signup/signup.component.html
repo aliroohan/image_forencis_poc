@@ -32,7 +32,7 @@
         </button>
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       </form>
-      <div class="signup-link">
+      <div class="signup-link" (click)="onLogin()">
         <span>Already have an account?</span>
       </div>
     </div>

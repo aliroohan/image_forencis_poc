@@ -72,4 +72,7 @@ export class SignupComponent {
       this.errorMessage = 'Invalid form data';
     }
   }
+  onLogin() {
+    this.router.navigate(['/login']);
+  }
 }

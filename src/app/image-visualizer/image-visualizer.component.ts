@@ -1,4 +1,3 @@
-// image-visualizer.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ImageService } from '../Services/image.service';
@@ -7,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Observable, firstValueFrom } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 interface ImageMetadata {
   name: string;
@@ -69,9 +69,10 @@ interface ManipulateResponse {
 
 @Component({
   selector: 'app-image-visualizer',
-  imports: [CommonModule, ImageMagnifierComponent, FormsModule],
+  standalone: true,
+  imports: [CommonModule, ImageMagnifierComponent, FormsModule, LucideAngularModule],
   templateUrl: './image-visualizer.component.html',
-  styleUrls: ['./image-visualizer.component.scss']
+  styleUrls: ['./image-visualizer.component.scss', './image-visualizer1.scss']
 })
 export class ImageVisualizerComponent implements OnInit {
   originalImage: string | null = null;
@@ -98,6 +99,14 @@ export class ImageVisualizerComponent implements OnInit {
   currentFile: File | null = null;
 
   @ViewChild('fileInput') fileInput!: ElementRef;
+
+  processingSteps = [
+    { id: 1, text: 'Analyzing image metadata', completed: false, active: false },
+    { id: 2, text: 'Performing Error Level Analysis', completed: false, active: false },
+    { id: 3, text: 'Detecting image manipulation', completed: false, active: false },
+    { id: 4, text: 'Generating analysis report', completed: false, active: false }
+  ];
+  currentStep = 0;
 
   constructor(private imageService: ImageService, private router: Router) { }
 
@@ -153,6 +162,7 @@ export class ImageVisualizerComponent implements OnInit {
       return;
     }
 
+    this.activeTab = 'original';
     this.isLoading = true;
     this.currentFile = file;
     const reader = new FileReader();
@@ -194,9 +204,13 @@ export class ImageVisualizerComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.resetProcessingSteps();
+    this.startProcessingAnimation();
 
     try {
       // Call analysis endpoint
+      this.resetProcessingSteps();
+    
       const analyzeResult = await firstValueFrom(this.imageService.analyzeImage(this.currentFile) as Observable<AnalyzeResponse>);
 
       // Parse the analysis text to extract different sections
@@ -215,7 +229,8 @@ export class ImageVisualizerComponent implements OnInit {
         exifAnalysis: exifAnalysisMatch ? exifAnalysisMatch[1].trim() : 'No EXIF analysis available',
         indicatorsFound: indicatorsMatch ? parseInt(indicatorsMatch[1]) : 0
       };
-
+      this.startProcessingAnimation();
+      
       // Update images with proper base64 handling
       this.elaImage = this.ensureBase64Prefix(analyzeResult.ela_image || '');
       this.noiseImage = this.ensureBase64Prefix(analyzeResult.noise_image || '');
@@ -228,7 +243,43 @@ export class ImageVisualizerComponent implements OnInit {
       this.showToast('Error during analysis. Please try again.', 'error');
     } finally {
       this.isLoading = false;
+      this.completeProcessingSteps();
     }
+  }
+
+  private resetProcessingSteps(): void {
+    this.processingSteps.forEach(step => {
+      step.completed = false;
+      step.active = false;
+    });
+    this.currentStep = 0;
+  }
+
+  private startProcessingAnimation(): void {
+    this.processingSteps[0].active = true;
+    
+    // Simulate step progression
+    const stepInterval = setInterval(() => {
+      if (this.currentStep < this.processingSteps.length) {
+        if (this.currentStep > 0) {
+          this.processingSteps[this.currentStep - 1].completed = true;
+          this.processingSteps[this.currentStep - 1].active = false;
+        }
+        if (this.currentStep < this.processingSteps.length) {
+          this.processingSteps[this.currentStep].active = true;
+        }
+        this.currentStep++;
+      } else {
+        clearInterval(stepInterval);
+      }
+    }, 1000); // Change step every 2 seconds
+  }
+
+  private completeProcessingSteps(): void {
+    this.processingSteps.forEach(step => {
+      step.completed = true;
+      step.active = false;
+    });
   }
 
   fetchMetadata(file: File): void {

@@ -26,16 +26,18 @@
           <div class="upload-area">
             <div class="upload-box" (click)="triggerFileInput()" (drop)="handleDrop($event)" (dragover)="onDragOver($event)">
               <div class="flex flex-col items-center justify-center h-full">
-                <i class="lucide-upload" style="font-size: 32px; color: #F39C12;"></i>
-                <div class="mt-2 text-gray-600">Drop Image Here<br>- or -<br><span class="text-mashreq-orange font-medium">Click to Upload</span></div>
+                <span class="material-symbols-outlined" style="font-size: 32px; color: #F39C12;">
+                  upload_file
+                  </span>
+                <div class="mt-2 text-gray-600" style="text-align: center;">Drop Image Here<br>- or -<br style="text-align: center;"><span class="text-mashreq-orange font-medium">Click to Upload</span></div>
               </div>
               <input type="file" accept="image/*" class="hidden" #fileInput (change)="handleFileUpload($event)">
             </div>
           </div>
           <!-- Analyze Button -->
           <div *ngIf="originalImage && !isLoading" class="flex justify-center mb-2">
-            <button class="btn-primary bg-mashreq-orange hover:bg-mashreq-dark flex items-center gap-2" (click)="analyzeImage()">
-              <i class="lucide-search"></i> Analyze Image
+            <button class="btn-primary bg-mashreq-orange flex items-center gap-2" style="border: none;" (click)="analyzeImage()">
+               Analyze Image
             </button>
           </div>
           <!-- Manipulation Analysis Results (always below upload) -->
@@ -81,9 +83,22 @@
             <button class="tab-btn" [class.active]="activeTab === 'ai'" (click)="activeTab = 'ai'">AI Detection Heatmap</button>
           </div>
           <!-- Loading Spinner -->
-          <div *ngIf="isLoading" class="text-center py-8">
-            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-mashreq-orange border-r-transparent"></div>
-            <p class="mt-2 text-gray-600">Processing image...</p>
+          <div *ngIf="isLoading" class="processing-animation">
+            <div class="processing-spinner pulse"></div>
+            <h3 class="processing-title">Processing Image</h3>
+            <p class="processing-subtitle">Please wait while we analyze your image</p>
+            <div class="processing-steps">
+              <div *ngFor="let step of processingSteps" 
+                   class="processing-step"
+                   [class.active]="step.active"
+                   [class.completed]="step.completed">
+                <div class="step-icon">
+                  <span *ngIf="!step.completed">{{step.id}}</span>
+                  <span *ngIf="step.completed">✓</span>
+                </div>
+                <span class="step-text">{{step.text}}</span>
+              </div>
+            </div>
           </div>
           <!-- Tab Content -->
           <div *ngIf="originalImage && !isLoading">

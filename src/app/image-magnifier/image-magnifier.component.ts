@@ -26,19 +26,30 @@ export class ImageMagnifierComponent implements AfterViewInit {
   handleMouseMove(e: MouseEvent) {
     if (this.imgRef && this.imgRef.nativeElement) {
       // Get image position and dimensions
-      const { left, top, width, height } = this.imgRef.nativeElement.getBoundingClientRect();
+      const rect = this.imgRef.nativeElement.getBoundingClientRect();
       
       // Calculate mouse position relative to the image
-      const x = e.clientX - left;
-      const y = e.clientY - top;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       
-      // Set magnifier position
-      this.position = { x, y };
-      
-      // Calculate cursor position as percentage
+      // Calculate cursor position as percentage of image dimensions
       this.cursorPosition = {
-        x: (x / width) * 100,
-        y: (y / height) * 100,
+        x: (x / rect.width) * 100,
+        y: (y / rect.height) * 100
+      };
+      
+      // Ensure the magnifier stays within image bounds
+      const magnifierSize = 150; // Size of the magnifier
+      const halfSize = magnifierSize / 2;
+      
+      // Calculate the magnifier position
+      const magnifierX = Math.max(halfSize, Math.min(rect.width - halfSize, x));
+      const magnifierY = Math.max(halfSize, Math.min(rect.height - halfSize, y));
+      
+      // Set the magnifier position
+      this.position = {
+        x: magnifierX,
+        y: magnifierY
       };
       
       this.showMagnifier = true;
