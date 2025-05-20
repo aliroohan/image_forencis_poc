@@ -12,7 +12,7 @@ export class ImageService {
   analyzeImage(image: File) {
     const formData = new FormData();
     formData.append('file', image);
-    return this.http.post(`${this.baseUrl}/api/analyze_image`, formData);
+    return this.http.post(`${this.baseUrl}/analyze_image`, formData);
   }
 
   detectClone(image: File) {
@@ -24,25 +24,25 @@ export class ImageService {
   ELA(image: File) {
     const formData = new FormData();
     formData.append('file', image);
-    return this.http.post(`${this.baseUrl}/api/error_level_analysis`, formData);
+    return this.http.post(`${this.baseUrl}/error_level_analysis`, formData);
   }
 
   noise(image: File) {
     const formData = new FormData();
     formData.append('file', image);
-    return this.http.post(`${this.baseUrl}/api/noise_analysis`, formData);
+    return this.http.post(`${this.baseUrl}/noise_analysis`, formData);
   }
 
   metadata(image: File) {
     const formData = new FormData();
     formData.append('file', image);
-    return this.http.post(`${this.baseUrl}/api/extract_exif_metadata`, formData);
+    return this.http.post(`${this.baseUrl}/extract_exif_metadata`, formData);
   }
 
   manipulate(image: File) {
     const formData = new FormData();
     formData.append('file', image);
-    return this.http.post(`${this.baseUrl}/api/manipulation_likelihood`, formData);
+    return this.http.post(`${this.baseUrl}/manipulation_likelihood`, formData);
   }
 
 
