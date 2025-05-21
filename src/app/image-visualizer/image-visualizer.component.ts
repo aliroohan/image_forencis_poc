@@ -4,7 +4,7 @@ import { ImageService } from '../Services/image.service';
 import { ImageMagnifierComponent } from '../image-magnifier/image-magnifier.component';
 import { FormsModule } from '@angular/forms';
 import { Observable, firstValueFrom } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Search } from 'lucide-angular';
 
@@ -114,7 +114,7 @@ export class ImageVisualizerComponent implements OnInit {
     if (!localStorage.getItem('user')) {
       this.router.navigate(['/login']);
     }
-   }
+  }
 
   signOut(): void {
     localStorage.removeItem('user');
@@ -211,10 +211,14 @@ export class ImageVisualizerComponent implements OnInit {
       // Call analysis endpoint
       this.resetProcessingSteps();
     
-      const analyzeResult = await firstValueFrom(this.imageService.analyzeImage(this.currentFile) as Observable<AnalyzeResponse>);
+      const response = await firstValueFrom(
+        this.imageService.analyzeImage(this.currentFile).pipe(
+          map(res => res.body as AnalyzeResponse)
+        )
+      );
 
       // Parse the analysis text to extract different sections
-      const analysisText = analyzeResult.analysis_text;
+      const analysisText = response.analysis_text;
       const overallAssessmentMatch = analysisText.match(/\*\*Overall Assessment: (.*?)\*\*/);
       const cloneDetectionMatch = analysisText.match(/### Clone Detection Analysis:\n(.*?)(?=\n\n|$)/s);
       const exifAnalysisMatch = analysisText.match(/### EXIF Metadata Analysis:\n(.*?)(?=\n\n|$)/s);
@@ -224,7 +228,7 @@ export class ImageVisualizerComponent implements OnInit {
       this.analysisResult = {
         overallAssessment: overallAssessmentMatch ? overallAssessmentMatch[1] : 'No assessment available',
         summary: analysisText.split('\n\n')[1] || 'No summary available',
-        manipulationProbability: analyzeResult.manipulation_probability || 0,
+        manipulationProbability: response.manipulation_probability || 0,
         cloneDetection: cloneDetectionMatch ? cloneDetectionMatch[1].trim() : 'No clone detection results',
         exifAnalysis: exifAnalysisMatch ? exifAnalysisMatch[1].trim() : 'No EXIF analysis available',
         indicatorsFound: indicatorsMatch ? parseInt(indicatorsMatch[1]) : 0
@@ -232,10 +236,10 @@ export class ImageVisualizerComponent implements OnInit {
       this.startProcessingAnimation();
       
       // Update images with proper base64 handling
-      this.elaImage = this.ensureBase64Prefix(analyzeResult.ela_image || '');
-      this.noiseImage = this.ensureBase64Prefix(analyzeResult.noise_image || '');
-      this.cloneImage = this.ensureBase64Prefix(analyzeResult.clone_image || '');
-      this.aiHeatmapImage = this.ensureBase64Prefix(analyzeResult.heatmap_image || '');
+      this.elaImage = this.ensureBase64Prefix(response.ela_image || '');
+      this.noiseImage = this.ensureBase64Prefix(response.noise_image || '');
+      this.cloneImage = this.ensureBase64Prefix(response.clone_image || '');
+      this.aiHeatmapImage = this.ensureBase64Prefix(response.heatmap_image || '');
 
       this.showToast('Analysis complete', 'success');
     } catch (error) {
@@ -283,7 +287,8 @@ export class ImageVisualizerComponent implements OnInit {
   }
 
   fetchMetadata(file: File): void {
-    (this.imageService.metadata(file) as Observable<MetadataResponse>).pipe(
+    this.imageService.metadata(file).pipe(
+      map(res => res.body as MetadataResponse),
       catchError(error => {
         console.error('Error fetching metadata:', error);
         this.showToast('Error fetching metadata', 'error');
