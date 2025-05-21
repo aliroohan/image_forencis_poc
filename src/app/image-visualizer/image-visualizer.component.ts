@@ -73,7 +73,7 @@ interface ManipulateResponse {
   standalone: true,
   imports: [CommonModule, ImageMagnifierComponent, FormsModule, LucideAngularModule],
   templateUrl: './image-visualizer.component.html',
-  styleUrls: ['./image-visualizer.component.scss', './image-visualizer1.scss']
+  styleUrls: ['./image-visualizer.component.scss', './image-visualizer1.scss', './image-visualizer2.scss']
 })
 export class ImageVisualizerComponent implements OnInit {
   originalImage: string | null = null;
