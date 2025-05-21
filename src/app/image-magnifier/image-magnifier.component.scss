@@ -47,7 +47,24 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-
+/* Mobile optimization */
+@media (max-width: 767px) {
+  /* Reduce border thickness on mobile */
+  .border-2 {
+    border-width: 1px;
+  }
+  
+  /* More subtle shadow for mobile */
+  .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Ensure touch area is big enough */
+  .magnifier-touch-area {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
 
 \  
   /* You would need to define these Tailwind-like utility classes in your Angular styles */
