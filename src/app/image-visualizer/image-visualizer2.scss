@@ -206,7 +206,7 @@ app-root,
 }
 
 
-@media (max-width: 767px) {
+@media (max-width: 900px) {
   .main-layout {
     display: grid !important;
     grid-template-rows: auto;
@@ -265,7 +265,7 @@ app-root,
   .header-content {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
   }
   
   .logo-container {
@@ -313,8 +313,8 @@ app-root,
   /* Adjust paddings for better mobile spacing */
   .card-content {
     padding-top: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 100px;
+    padding-right: 100px;
   }
 }
 
@@ -360,6 +360,13 @@ app-root,
   color: #333;
   text-align: center;
 }
+
+@media screen and (max-width: 540px) {
+    .header-title {
+            display: none;
+    }
+}
+
 
 @keyframes fadeIn {
   from {

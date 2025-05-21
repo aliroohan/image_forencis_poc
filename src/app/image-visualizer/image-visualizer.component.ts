@@ -155,6 +155,9 @@ export class ImageVisualizerComponent implements OnInit {
       return;
     }
 
+    // Clear previous results
+    this.clearPreviousResults();
+
     this.activeTab = 'original';
     this.isLoading = true;
     this.currentFile = file;
@@ -173,6 +176,28 @@ export class ImageVisualizerComponent implements OnInit {
     };
     
     reader.readAsDataURL(file);
+  }
+
+  // Helper method to clear all previous analysis results
+  private clearPreviousResults(): void {
+    // Clear all analysis images
+    this.elaImage = null;
+    this.noiseImage = null;
+    this.cloneImage = null;
+    this.aiHeatmapImage = null;
+    
+    // Reset analysis results
+    this.analysisResult = {
+      overallAssessment: '',
+      summary: '',
+      manipulationProbability: 0,
+      cloneDetection: '',
+      exifAnalysis: '',
+      indicatorsFound: 0
+    };
+    
+    // Reset metadata
+    this.metadata = null;
   }
 
   triggerFileInput(): void {
