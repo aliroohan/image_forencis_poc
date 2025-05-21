@@ -209,7 +209,6 @@ export class ImageVisualizerComponent implements OnInit {
 
     try {
       // Call analysis endpoint
-      this.resetProcessingSteps();
     
       const response = await firstValueFrom(
         this.imageService.analyzeImage(this.currentFile).pipe(
@@ -233,7 +232,6 @@ export class ImageVisualizerComponent implements OnInit {
         exifAnalysis: exifAnalysisMatch ? exifAnalysisMatch[1].trim() : 'No EXIF analysis available',
         indicatorsFound: indicatorsMatch ? parseInt(indicatorsMatch[1]) : 0
       };
-      this.startProcessingAnimation();
       
       // Update images with proper base64 handling
       this.elaImage = this.ensureBase64Prefix(response.ela_image || '');
