@@ -205,11 +205,29 @@ export class ImageVisualizerComponent implements OnInit {
 
     this.isLoading = true;
     this.resetProcessingSteps();
-    this.startProcessingAnimation();
+    this.processingSteps[0].active = true;
+    
+    // Complete the animation first
+    await new Promise<void>((resolve) => {
+      const stepInterval = setInterval(() => {
+        if (this.currentStep < this.processingSteps.length) {
+          if (this.currentStep > 0) {
+            this.processingSteps[this.currentStep - 1].completed = true;
+            this.processingSteps[this.currentStep - 1].active = false;
+          }
+          if (this.currentStep < this.processingSteps.length) {
+            this.processingSteps[this.currentStep].active = true;
+          }
+          this.currentStep++;
+        } else {
+          clearInterval(stepInterval);
+          resolve();
+        }
+      }, 1000);
+    });
 
     try {
-      // Call analysis endpoint
-    
+      // Call analysis endpoint only after animation completes
       const response = await firstValueFrom(
         this.imageService.analyzeImage(this.currentFile).pipe(
           map(res => res.body as AnalyzeResponse)
@@ -244,8 +262,8 @@ export class ImageVisualizerComponent implements OnInit {
       console.error('Error during analysis:', error);
       this.showToast('Error during analysis. Please try again.', 'error');
     } finally {
-      this.isLoading = false;
       this.completeProcessingSteps();
+      this.isLoading = false;
     }
   }
 

@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ImageService {
-  private baseUrl = 'https://159.65.248.129/api';
+  private baseUrl = 'https://forensicapi.duckdns.org/api';
 
   constructor(private http: HttpClient) { }
 
