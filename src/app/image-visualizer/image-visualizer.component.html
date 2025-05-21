@@ -99,72 +99,188 @@
           </div>
           <!-- Tab Content -->
           <div style="display: flex; flex-direction: column; align-items: center;" *ngIf="originalImage && !isLoading">
-            <div [ngSwitch]="activeTab" >
+            <div [ngSwitch]="activeTab" class="w-full">
               <!-- Original Image Tab -->
-              <div *ngSwitchCase="'original'">
+              <div *ngSwitchCase="'original'" class="flex flex-col items-center">
                 <div class="flex flex-col items-center">
                   <h3 class="text-lg font-medium mb-2">Original Image</h3>
                   <app-image-magnifier [src]="originalImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
                 </div>
+                <!-- Zoom Controls inside each tab that has an image -->
+                <div class="fixed-zoom-controls" *ngIf="shouldShowZoomControls()">
+                  <div class="zoom-controls">
+                    <div class="flex items-center justify-between">
+                      <div class="zoom-label">Image Zoom</div>
+                      <div class="zoom items-center gap-4">
+                        <button 
+                          class="zoom-btn" 
+                          (click)="decreaseZoom()" 
+                          [disabled]="zoomLevel <= 1"
+                          [class.disabled]="zoomLevel <= 1"
+                          title="Decrease Zoom">
+                          <span class="text-mashreq-orange font-bold">−</span>
+                        </button>
+                        <div class="zoom-level">
+                          {{zoomLevel}}x
+                        </div>
+                        <button 
+                          class="zoom-btn" 
+                          (click)="increaseZoom()" 
+                          [disabled]="zoomLevel >= 10"
+                          [class.disabled]="zoomLevel >= 10"
+                          title="Increase Zoom">
+                          <span class="text-mashreq-orange font-bold">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- ELA Tab -->
-              <div *ngSwitchCase="'ela'">
+              <div *ngSwitchCase="'ela'" class="flex flex-col items-center">
                 <div class="flex flex-col items-center">
                   <h3 class="text-lg font-medium mb-2">Error Level Analysis (ELA)</h3>
                   <app-image-magnifier *ngIf="elaImage" [src]="elaImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
                   <div *ngIf="!elaImage" class="text-gray-400">ELA result will appear here after analysis.</div>
                 </div>
+                <!-- Zoom Controls only shown when elaImage exists -->
+                <div class="fixed-zoom-controls" *ngIf="shouldShowZoomControls()">
+                  <div class="zoom-controls">
+                    <div class="flex items-center justify-between">
+                      <div class="zoom-label">Image Zoom</div>
+                      <div class="zoom items-center gap-4">
+                        <button 
+                          class="zoom-btn" 
+                          (click)="decreaseZoom()" 
+                          [disabled]="zoomLevel <= 1"
+                          [class.disabled]="zoomLevel <= 1"
+                          title="Decrease Zoom">
+                          <span class="text-mashreq-orange font-bold">−</span>
+                        </button>
+                        <div class="zoom-level">
+                          {{zoomLevel}}x
+                        </div>
+                        <button 
+                          class="zoom-btn" 
+                          (click)="increaseZoom()" 
+                          [disabled]="zoomLevel >= 10"
+                          [class.disabled]="zoomLevel >= 10"
+                          title="Increase Zoom">
+                          <span class="text-mashreq-orange font-bold">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- Noise Analysis Tab -->
-              <div *ngSwitchCase="'noise'">
+              <div *ngSwitchCase="'noise'" class="flex flex-col items-center">
                 <div class="flex flex-col items-center">
                   <h3 class="text-lg font-medium mb-2">Noise Analysis</h3>
                   <app-image-magnifier *ngIf="noiseImage" [src]="noiseImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
                   <div *ngIf="!noiseImage" class="text-gray-400">Noise analysis result will appear here after analysis.</div>
                 </div>
+                <!-- Zoom Controls only shown when noiseImage exists -->
+                <div class="fixed-zoom-controls" *ngIf="shouldShowZoomControls()">
+                  <div class="zoom-controls">
+                    <div class="flex items-center justify-between">
+                      <div class="zoom-label">Image Zoom</div>
+                      <div class="zoom items-center gap-4">
+                        <button 
+                          class="zoom-btn" 
+                          (click)="decreaseZoom()" 
+                          [disabled]="zoomLevel <= 1"
+                          [class.disabled]="zoomLevel <= 1"
+                          title="Decrease Zoom">
+                          <span class="text-mashreq-orange font-bold">−</span>
+                        </button>
+                        <div class="zoom-level">
+                          {{zoomLevel}}x
+                        </div>
+                        <button 
+                          class="zoom-btn" 
+                          (click)="increaseZoom()" 
+                          [disabled]="zoomLevel >= 10"
+                          [class.disabled]="zoomLevel >= 10"
+                          title="Increase Zoom">
+                          <span class="text-mashreq-orange font-bold">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- Clone Detection Tab -->
-              <div *ngSwitchCase="'clone'">
+              <div *ngSwitchCase="'clone'" class="flex flex-col items-center">
                 <div class="flex flex-col items-center">
                   <h3 class="text-lg font-medium mb-2">Clone Detection</h3>
                   <app-image-magnifier *ngIf="cloneImage" [src]="cloneImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
                   <div *ngIf="!cloneImage" class="text-gray-400">Clone detection result will appear here after analysis.</div>
                 </div>
+                <!-- Zoom Controls only shown when cloneImage exists -->
+                <div class="fixed-zoom-controls" *ngIf="shouldShowZoomControls()">
+                  <div class="zoom-controls">
+                    <div class="flex items-center justify-between">
+                      <div class="zoom-label">Image Zoom</div>
+                      <div class="zoom items-center gap-4">
+                        <button 
+                          class="zoom-btn" 
+                          (click)="decreaseZoom()" 
+                          [disabled]="zoomLevel <= 1"
+                          [class.disabled]="zoomLevel <= 1"
+                          title="Decrease Zoom">
+                          <span class="text-mashreq-orange font-bold">−</span>
+                        </button>
+                        <div class="zoom-level">
+                          {{zoomLevel}}x
+                        </div>
+                        <button 
+                          class="zoom-btn" 
+                          (click)="increaseZoom()" 
+                          [disabled]="zoomLevel >= 10"
+                          [class.disabled]="zoomLevel >= 10"
+                          title="Increase Zoom">
+                          <span class="text-mashreq-orange font-bold">+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- AI Detection Heatmap Tab -->
-              <div *ngSwitchCase="'ai'">
+              <div *ngSwitchCase="'ai'" class="flex flex-col items-center">
                 <div class="flex flex-col items-center">
                   <h3 class="text-lg font-medium mb-2">AI Detection Heatmap</h3>
                   <app-image-magnifier *ngIf="aiHeatmapImage" [src]="aiHeatmapImage" width="100%" [zoomLevel]="zoomLevel"></app-image-magnifier>
                   <div *ngIf="!aiHeatmapImage" class="text-gray-400">AI detection heatmap will appear here after analysis.</div>
                 </div>
-              </div>
-            </div>
-            <!-- Fixed Zoom Controls at Bottom -->
-            <div class="fixed-zoom-controls">
-              <div class="zoom-controls">
-                <div class="flex items-center justify-between">
-                  <div class="zoom-label">Image Zoom</div>
-                  <div class="zoom items-center gap-4">
-                    <button 
-                      class="zoom-btn" 
-                      (click)="decreaseZoom()" 
-                      [disabled]="zoomLevel <= 1"
-                      [class.disabled]="zoomLevel <= 1"
-                      title="Decrease Zoom">
-                      <span class="text-mashreq-orange font-bold">−</span>
-                    </button>
-                    <div class="zoom-level">
-                      {{zoomLevel}}x
+                <!-- Zoom Controls only shown when aiHeatmapImage exists -->
+                <div class="fixed-zoom-controls" *ngIf="shouldShowZoomControls()">
+                  <div class="zoom-controls">
+                    <div class="flex items-center justify-between">
+                      <div class="zoom-label">Image Zoom</div>
+                      <div class="zoom items-center gap-4">
+                        <button 
+                          class="zoom-btn" 
+                          (click)="decreaseZoom()" 
+                          [disabled]="zoomLevel <= 1"
+                          [class.disabled]="zoomLevel <= 1"
+                          title="Decrease Zoom">
+                          <span class="text-mashreq-orange font-bold">−</span>
+                        </button>
+                        <div class="zoom-level">
+                          {{zoomLevel}}x
+                        </div>
+                        <button 
+                          class="zoom-btn" 
+                          (click)="increaseZoom()" 
+                          [disabled]="zoomLevel >= 10"
+                          [class.disabled]="zoomLevel >= 10"
+                          title="Increase Zoom">
+                          <span class="text-mashreq-orange font-bold">+</span>
+                        </button>
+                      </div>
                     </div>
-                    <button 
-                      class="zoom-btn" 
-                      (click)="increaseZoom()" 
-                      [disabled]="zoomLevel >= 10"
-                      [class.disabled]="zoomLevel >= 10"
-                      title="Increase Zoom">
-                      <span class="text-mashreq-orange font-bold">+</span>
-                    </button>
                   </div>
                 </div>
               </div>

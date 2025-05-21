@@ -335,7 +335,27 @@ export class ImageVisualizerComponent implements OnInit {
   }
 
   decreaseZoom(): void {
-    this.zoomLevel = Math.max(this.zoomLevel - 0.5, 1);
+    if (this.zoomLevel > 1) {
+      this.zoomLevel -= 0.5;
+    }
+  }
+
+  shouldShowZoomControls(): boolean {
+    // Show zoom controls only if there's an image loaded in the current tab
+    switch (this.activeTab) {
+      case 'original':
+        return !!this.originalImage;
+      case 'ela':
+        return !!this.elaImage;
+      case 'noise':
+        return !!this.noiseImage;
+      case 'clone':
+        return !!this.cloneImage;
+      case 'ai':
+        return !!this.aiHeatmapImage;
+      default:
+        return false;
+    }
   }
 
   private showToast(message: string, type: 'success' | 'error' | 'info'): void {
