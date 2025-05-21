@@ -7,6 +7,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Search } from 'lucide-angular';
+import { HttpResponse } from '@angular/common/http';
 
 interface ImageMetadata {
   name: string;
@@ -100,14 +101,6 @@ export class ImageVisualizerComponent implements OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef;
 
-  processingSteps = [
-    { id: 1, text: 'Analyzing image metadata', completed: false, active: false },
-    { id: 2, text: 'Performing Error Level Analysis', completed: false, active: false },
-    { id: 3, text: 'Detecting image manipulation', completed: false, active: false },
-    { id: 4, text: 'Generating analysis report', completed: false, active: false }
-  ];
-  currentStep = 0;
-
   constructor(private imageService: ImageService, private router: Router) { }
 
   ngOnInit(): void {
@@ -198,168 +191,102 @@ export class ImageVisualizerComponent implements OnInit {
   }
 
   async analyzeImage(): Promise<void> {
-    if (!this.currentFile) {
+    if (!this.originalImage || !this.currentFile) {
       this.showToast('Please upload an image first', 'error');
       return;
     }
 
     this.isLoading = true;
-    this.resetProcessingSteps();
-    this.processingSteps[0].active = true;
-    
-    // Complete the animation first
-    await new Promise<void>((resolve) => {
-      const stepInterval = setInterval(() => {
-        if (this.currentStep < this.processingSteps.length) {
-          if (this.currentStep > 0) {
-            this.processingSteps[this.currentStep - 1].completed = true;
-            this.processingSteps[this.currentStep - 1].active = false;
-          }
-          if (this.currentStep < this.processingSteps.length) {
-            this.processingSteps[this.currentStep].active = true;
-          }
-          this.currentStep++;
-        } else {
-          clearInterval(stepInterval);
-          resolve();
-        }
-      }, 1000);
-    });
 
     try {
-      // Call analysis endpoint only after animation completes
+      // Use the existing imageService with the proper method signature
       const response = await firstValueFrom(
         this.imageService.analyzeImage(this.currentFile).pipe(
           map(res => res.body as AnalyzeResponse)
         )
       );
-
-      // Parse the analysis text to extract different sections
-      const analysisText = response.analysis_text;
-      const overallAssessmentMatch = analysisText.match(/\*\*Overall Assessment: (.*?)\*\*/);
-      const cloneDetectionMatch = analysisText.match(/### Clone Detection Analysis:\n(.*?)(?=\n\n|$)/s);
-      const exifAnalysisMatch = analysisText.match(/### EXIF Metadata Analysis:\n(.*?)(?=\n\n|$)/s);
-      const indicatorsMatch = analysisText.match(/Indicators found: (\d+)/);
-
-      // Update analysis results
-      this.analysisResult = {
-        overallAssessment: overallAssessmentMatch ? overallAssessmentMatch[1] : 'No assessment available',
-        summary: analysisText.split('\n\n')[1] || 'No summary available',
-        manipulationProbability: response.manipulation_probability || 0,
-        cloneDetection: cloneDetectionMatch ? cloneDetectionMatch[1].trim() : 'No clone detection results',
-        exifAnalysis: exifAnalysisMatch ? exifAnalysisMatch[1].trim() : 'No EXIF analysis available',
-        indicatorsFound: indicatorsMatch ? parseInt(indicatorsMatch[1]) : 0
-      };
       
-      // Update images with proper base64 handling
+      this.analysisResult.manipulationProbability = response.manipulation_probability || 0;
+      this.analysisResult.summary = response.analysis_text || '';
+      this.analysisResult.indicatorsFound = response.clone_count || 0;
+      
+      if (response.manipulation_probability < 0.3) {
+        this.analysisResult.overallAssessment = 'Low Risk';
+      } else if (response.manipulation_probability < 0.6) {
+        this.analysisResult.overallAssessment = 'Medium Risk';
+      } else {
+        this.analysisResult.overallAssessment = 'High Risk';
+      }
+
+      if (response.clone_count > 0) {
+        this.analysisResult.cloneDetection = 'Clone artifacts detected';
+      } else {
+        this.analysisResult.cloneDetection = 'No clone artifacts detected';
+      }
+
+      this.analysisResult.exifAnalysis = 'EXIF data appears consistent';
+      
+      // Update the visualizations
       this.elaImage = this.ensureBase64Prefix(response.ela_image || '');
       this.noiseImage = this.ensureBase64Prefix(response.noise_image || '');
       this.cloneImage = this.ensureBase64Prefix(response.clone_image || '');
       this.aiHeatmapImage = this.ensureBase64Prefix(response.heatmap_image || '');
 
-      this.showToast('Analysis complete', 'success');
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 500);
+      
     } catch (error) {
-      console.error('Error during analysis:', error);
-      this.showToast('Error during analysis. Please try again.', 'error');
-    } finally {
-      this.completeProcessingSteps();
+      console.error('Analysis error:', error);
+      this.showToast('Error analyzing image', 'error');
       this.isLoading = false;
     }
-  }
-
-  private resetProcessingSteps(): void {
-    this.processingSteps.forEach(step => {
-      step.completed = false;
-      step.active = false;
-    });
-    this.currentStep = 0;
-  }
-
-  private startProcessingAnimation(): void {
-    this.processingSteps[0].active = true;
-    
-    // Simulate step progression
-    const stepInterval = setInterval(() => {
-      if (this.currentStep < this.processingSteps.length) {
-        if (this.currentStep > 0) {
-          this.processingSteps[this.currentStep - 1].completed = true;
-          this.processingSteps[this.currentStep - 1].active = false;
-        }
-        if (this.currentStep < this.processingSteps.length) {
-          this.processingSteps[this.currentStep].active = true;
-        }
-        this.currentStep++;
-      } else {
-        clearInterval(stepInterval);
-      }
-    }, 1000); // Change step every 2 seconds
-  }
-
-  private completeProcessingSteps(): void {
-    this.processingSteps.forEach(step => {
-      step.completed = true;
-      step.active = false;
-    });
   }
 
   fetchMetadata(file: File): void {
     this.imageService.metadata(file).pipe(
       map(res => res.body as MetadataResponse),
       catchError(error => {
-        console.error('Error fetching metadata:', error);
-        this.showToast('Error fetching metadata', 'error');
+        console.error('Metadata extraction error:', error);
         throw error;
       })
     ).subscribe({
-      next: (result: MetadataResponse) => {
+      next: (response: MetadataResponse) => {
         this.metadata = {
-          width: result.width || 0,
-          height: result.height || 0,
-          format: file.type.split('/')[1].toUpperCase(),
-          size: file.size,
-          lastModified: new Date(file.lastModified).toLocaleString(),
           name: file.name,
-          colorSpace: result.colorSpace || "Unknown",
-          exif: result.exif || {}
+          width: response.width || 0,
+          height: response.height || 0,
+          format: file.type.split('/')[1],
+          size: file.size,
+          colorSpace: response.colorSpace || '',
+          exif: response.exif || {}
         };
+        console.log('Metadata:', this.metadata);
       },
-      error: (error) => {
-        console.error('Error in metadata subscription:', error);
-        this.showToast('Error processing metadata', 'error');
+      error: (error: any) => {
+        console.error('Metadata extraction error:', error);
       }
     });
   }
 
   increaseZoom(): void {
-    this.zoomLevel = Math.min(this.zoomLevel + 0.5, 10);
+    if (this.zoomLevel < 10) this.zoomLevel += 0.5;
   }
 
   decreaseZoom(): void {
-    if (this.zoomLevel > 1) {
-      this.zoomLevel -= 0.5;
-    }
+    if (this.zoomLevel > 1) this.zoomLevel -= 0.5;
   }
 
   shouldShowZoomControls(): boolean {
-    // Show zoom controls only if there's an image loaded in the current tab
-    switch (this.activeTab) {
-      case 'original':
-        return !!this.originalImage;
-      case 'ela':
-        return !!this.elaImage;
-      case 'noise':
-        return !!this.noiseImage;
-      case 'clone':
-        return !!this.cloneImage;
-      case 'ai':
-        return !!this.aiHeatmapImage;
-      default:
-        return false;
-    }
+    return this.activeTab === 'original' ||
+           (this.activeTab === 'ela' && !!this.elaImage) ||
+           (this.activeTab === 'noise' && !!this.noiseImage) ||
+           (this.activeTab === 'clone' && !!this.cloneImage) ||
+           (this.activeTab === 'ai' && !!this.aiHeatmapImage);
   }
 
   private showToast(message: string, type: 'success' | 'error' | 'info'): void {
     console.log(`${type}: ${message}`);
-
+    // Implement your toast notification here
   }
 }

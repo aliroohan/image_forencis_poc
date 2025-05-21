@@ -77,9 +77,6 @@
       max-width: 98vw;
       min-height: 120px;
     }
-    .card-header{
-      padding: 2rem 1rem 1.5rem 1rem;
-    }
     .card-content {
       padding: 0 40px !important;
     }
@@ -278,7 +275,7 @@
   }
   
   /* Responsive adjustments for header */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .container {
       width: 90%;
     }
