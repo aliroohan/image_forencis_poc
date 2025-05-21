@@ -30,20 +30,19 @@
 }
 
 .btn-outline {
-  padding: 0.5rem 1rem; /* Equivalent to px-4 py-2 */
-  border-radius: 0.25rem; /* Equivalent to rounded */
-  border: 1px solid #d1d5db; /* Equivalent to border border-gray-300 */
+  padding: 0.5rem 1rem; 
+  border-radius: 0.25rem; 
+  border: 1px solid #d1d5db;
   transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke;
+  text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
 
 .btn-outline:hover {
-  background-color: #f3f4f6; /* Equivalent to hover:bg-gray-100 */
+  background-color: #f3f4f6;
 }
 
-/* Color Palette */
 .bg-mashreq-orange {
   background-color: #f39c12;
 }
@@ -63,7 +62,6 @@
   color: #fff;
 }
 
-/* Switch toggle styles */
 .switch {
   position: relative;
   display: inline-block;
@@ -129,7 +127,6 @@ input:checked + .slider:before {
   }
 }
 
-/* Container/Layout */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -382,7 +379,6 @@ input:checked + .slider:before {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-/* Media queries */
 @media (min-width: 900px) {
   .md\:flex-row {
     flex-direction: row;
@@ -393,7 +389,6 @@ input:checked + .slider:before {
   }
 }
 
-/* Image magnifier specific styles */
 .image-magnifier {
   width: 100%;
   position: relative;
@@ -437,7 +432,7 @@ input:checked + .slider:before {
   color: #f39c12;
 }
 
-/* Upload Area Styles */
+
 .upload-area {
   display: flex;
   justify-content: center;
