@@ -13,6 +13,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
   showPassword: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService) {
     this.loginForm = this.formBuilder.group({
@@ -23,13 +24,16 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       console.log(this.loginForm.value);
       this.authService.login(this.loginForm.value).subscribe((res: any) => {
         console.log(res);
         localStorage.setItem('user', JSON.stringify(res));
+        this.isLoading = false;
         this.router.navigate(['/image-visualizer']);
       }, (err: any) => {
         this.errorMessage = err.error.message;
+        this.isLoading = false;
       });
     } else {
       this.errorMessage = 'Invalid form data';

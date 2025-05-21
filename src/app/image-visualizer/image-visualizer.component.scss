@@ -702,3 +702,67 @@ app-root,
     font-weight: 500;
   }
 }
+
+/* Mobile view rearrangement using pure CSS grid */
+@media (max-width: 767px) {
+  .main-layout {
+    display: grid !important;
+    grid-template-rows: auto;
+  }
+  
+  .main-layout > * {
+    width: 100% !important;
+  }
+  
+  .left-column {
+    display: contents !important; /* This makes the child elements participate in the grid layout directly */
+  }
+  
+  /* Set the visual order */
+  .upload-section {
+    grid-row: 1; /* First in mobile view */
+    margin-bottom: 1rem;
+  }
+  
+  .analyze-button-container {
+    grid-row: 2; /* Second in mobile view */
+    margin-bottom: 1rem;
+  }
+  
+  .image-section {
+    grid-row: 3; /* Third in mobile view */
+    margin-bottom: 1.5rem;
+  }
+  
+  .results-section {
+    grid-row: 4; /* Fourth/last in mobile view */
+  }
+  
+  /* Fix tab bar layout on small screens */
+  .tab-bar-container {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding-bottom: 0.5rem;
+  }
+  
+  .tab-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  
+  /* Zoom controls adjustments */
+  .fixed-zoom-controls {
+    position: static;
+    margin: 1rem auto;
+    transform: none;
+    width: 100%;
+    left: auto;
+    bottom: auto;
+  }
+  
+  .zoom-controls {
+    max-width: 100%;
+  }
+}

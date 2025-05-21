@@ -15,7 +15,10 @@
                 <div class="options">
 
                 </div>
-                <button class="sign-in-btn" type="submit" [disabled]="!loginForm.valid">Sign In</button>
+                <button class="sign-in-btn" type="submit" [disabled]="!loginForm.valid || isLoading">
+                    <span *ngIf="!isLoading">Sign In</span>
+                    <div *ngIf="isLoading" class="spinner"></div>
+                </button>
                 <p *ngIf="errorMessage" class="error-message">{{errorMessage}}</p>
             </form>
             <div class="signup-link">

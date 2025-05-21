@@ -36,9 +36,10 @@
         <button
           class="sign-in-btn"
           type="submit"
-          [disabled]="!signupForm.valid"
+          [disabled]="!signupForm.valid || isLoading"
         >
-          Sign Up
+          <span *ngIf="!isLoading">Sign Up</span>
+          <div *ngIf="isLoading" class="spinner"></div>
         </button>
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       </form>

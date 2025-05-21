@@ -16,6 +16,7 @@ export class SignupComponent {
   errorMessage: string = '';
   showSuccessMessage: boolean = false;
   showPassword: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private formBuilder: FormBuilder, 
     private router: Router,
@@ -64,14 +65,17 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.signupForm.valid) {
+      this.isLoading = true;
       this.authService.register(this.signupForm.value).subscribe((res: any) => {
         console.log(res);
+        this.isLoading = false;
         this.showSuccessMessage = true;
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 1500);
       }, (err: any) => {
         this.errorMessage = err.error.message;
+        this.isLoading = false;
       });
     } else {
       this.errorMessage = 'Invalid form data';

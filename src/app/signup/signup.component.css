@@ -90,6 +90,10 @@ input[type="text"]:focus {
     cursor: pointer;
     margin-top: 0.5rem;
     transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
 }
 
 .sign-in-btn:disabled {
@@ -176,4 +180,19 @@ input[type="text"]:focus {
 
 .toggle-password:hover {
   text-decoration: underline;
+}
+
+.spinner {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 2px solid #fff;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

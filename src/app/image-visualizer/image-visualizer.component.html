@@ -19,11 +19,11 @@
       </div>
     </div>
     <div class="card-content pt-6">
-      <div class="flex flex-col md:flex-row gap-8">
+      <div class="flex flex-col md:flex-row gap-8 main-layout">
         <!-- Left Column: Upload + Results -->
-        <div class="flex flex-col gap-6 md:w-1/3 w-full">
+        <div class="flex flex-col gap-6 md:w-1/3 w-full left-column">
           <!-- Upload Area (always visible) -->
-          <div class="upload-area">
+          <div class="upload-area upload-section">
             <div class="upload-box" (click)="triggerFileInput()" (drop)="handleDrop($event)" (dragover)="onDragOver($event)">
               <div class="flex flex-col items-center justify-center h-full">
                 <span class="material-symbols-outlined" style="font-size: 32px; color: #F39C12;">
@@ -35,13 +35,13 @@
             </div>
           </div>
           <!-- Analyze Button -->
-          <div *ngIf="originalImage && !isLoading" class="flex justify-center mb-2">
+          <div *ngIf="originalImage && !isLoading" class="flex justify-center mb-2 analyze-button-container">
             <button class="btn-primary bg-mashreq-orange flex items-center gap-2" style="border: none; cursor: pointer;" (click)="analyzeImage()">
                Analyze Image
             </button>
           </div>
           <!-- Manipulation Analysis Results (always below upload) -->
-          <div *ngIf="originalImage && !isLoading" class="results-card bg-white p-6 rounded-lg shadow-md">
+          <div *ngIf="originalImage && !isLoading" class="results-card bg-white p-6 rounded-lg shadow-md results-section">
             <h2 class="text-xl font-bold mb-4">Manipulation Analysis Results</h2>
             <div class="mb-4">
               <span class="font-medium">Overall Assessment:</span>
@@ -70,9 +70,9 @@
           </div>
         </div>
         <!-- Right Column: Tabs and Tab Content -->
-        <div class="flex-1 w-full">
+        <div class="flex-1 w-full right-column image-section">
           <!-- Tab Bar -->
-          <div class="flex border-b border-gray-200 mb-4">
+          <div class="flex border-b border-gray-200 mb-4 tab-bar-container">
             <button class="tab-btn" [class.active]="activeTab === 'original'" (click)="activeTab = 'original'">Original Image</button>
             <button class="tab-btn" [class.active]="activeTab === 'ela'" (click)="activeTab = 'ela'">Error Level Analysis (ELA)</button>
             <button class="tab-btn" [class.active]="activeTab === 'noise'" (click)="activeTab = 'noise'">Noise Analysis</button>
@@ -98,7 +98,7 @@
             </div>
           </div>
           <!-- Tab Content -->
-          <div style="display: flex; flex-direction: column; align-items: center;" *ngIf="originalImage && !isLoading">
+          <div style="display: flex; flex-direction: column; align-items: center;" *ngIf="originalImage && !isLoading" class="tab-content-container">
             <div [ngSwitch]="activeTab" class="w-full">
               <!-- Original Image Tab -->
               <div *ngSwitchCase="'original'" class="flex flex-col items-center">
