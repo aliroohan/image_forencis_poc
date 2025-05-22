@@ -143,68 +143,6 @@ app-root,
   bottom: auto;
 }
 
-.zoom-controls {
-  background: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  width: 100%;
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.95);
-
-  .zoom-btn {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: 2px solid #f39c12;
-    background: white;
-    color: #f39c12;
-    font-size: 1.25rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(243, 156, 18, 0.1);
-
-    &:hover:not(.disabled) {
-      background: #f39c12;
-      color: white;
-      transform: scale(1.05);
-      box-shadow: 0 4px 8px rgba(243, 156, 18, 0.2);
-    }
-
-    &:active:not(.disabled) {
-      transform: scale(0.95);
-    }
-
-    &.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      border-color: #d1d5db;
-      color: #9ca3af;
-      box-shadow: none;
-    }
-  }
-
-  .zoom-level {
-    min-width: 60px;
-    text-align: center;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #f39c12;
-    padding: 0 0.75rem;
-  }
-
-  .zoom-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
-  }
-}
-
 
 @media (max-width: 900px) {
   .main-layout {
