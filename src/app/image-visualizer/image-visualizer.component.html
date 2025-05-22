@@ -51,30 +51,73 @@
           <!-- Manipulation Analysis Results (always below upload) -->
           <div *ngIf="originalImage && !isLoading" class="results-card bg-white p-6 rounded-lg shadow-md results-section">
             <h2 class="text-xl font-bold mb-4">Manipulation Analysis Results</h2>
-            <div class="mb-4">
-              <span class="font-medium">Overall Assessment:</span>
-              <span class="text-mashreq-orange font-semibold">{{analysisResult.overallAssessment}}</span>
+            
+            <!-- Summary Banner -->
+            <div class="summary-banner mb-4" [ngClass]="{
+              'high-risk-banner': analysisResult.manipulationProbability > 0.6,
+              'medium-risk-banner': analysisResult.manipulationProbability > 0.3 && analysisResult.manipulationProbability <= 0.6,
+              'low-risk-banner': analysisResult.manipulationProbability <= 0.3
+            }">
+              <div class="flex items-center">
+                <div class="banner-icon">
+                  <span *ngIf="analysisResult.manipulationProbability > 0.6" class="material-symbols-outlined">warning</span>
+                  <span *ngIf="analysisResult.manipulationProbability > 0.3 && analysisResult.manipulationProbability <= 0.6" class="material-symbols-outlined">info</span>
+                  <span *ngIf="analysisResult.manipulationProbability <= 0.3" class="material-symbols-outlined">check_circle</span>
+                </div>
+                <div class="banner-text">
+                  <p *ngIf="analysisResult.manipulationProbability > 0.6" class="font-bold">Strong indicators of digital manipulation detected in this image.</p>
+                  <p *ngIf="analysisResult.manipulationProbability > 0.3 && analysisResult.manipulationProbability <= 0.6" class="font-bold">Some indicators of possible manipulation detected.</p>
+                  <p *ngIf="analysisResult.manipulationProbability <= 0.3" class="font-bold">No significant indicators of manipulation detected.</p>
+                </div>
+              </div>
             </div>
-            <div class="mb-4">
-              <h3 class="font-medium mb-1">Manipulation Probability</h3>
+            
+            <!-- Overall Assessment Section -->
+            <div class="result-section" [ngClass]="{'result-section-critical': analysisResult.manipulationProbability > 0.6}">
+              <h3 class="section-header">Overall Assessment:</h3>
+              <span class="indicator-value" [ngClass]="{
+                'high-risk': analysisResult.manipulationProbability > 0.6,
+                'medium-risk': analysisResult.manipulationProbability > 0.3 && analysisResult.manipulationProbability <= 0.6,
+                'low-risk': analysisResult.manipulationProbability <= 0.3
+              }">{{analysisResult.overallAssessment}}</span>
+              <span *ngIf="analysisResult.manipulationProbabilityPercent" class="ml-2">
+                ({{analysisResult.manipulationProbabilityPercent}} likelihood of manipulation)
+              </span>
+            </div>
+            
+            <!-- Manipulation Probability Section -->
+            <div class="result-section mb-4">
+              <h3 class="section-header">Manipulation Probability</h3>
               <div class="flex items-center gap-2">
                 <span class="text-gray-600">0</span>
                 <input type="range" min="0" max="1" step="0.01" [value]="analysisResult.manipulationProbability || 0" disabled class="prob-slider">
                 <span class="text-mashreq-orange font-bold">{{(analysisResult.manipulationProbability * 100) | number:'1.1-1'}}%</span>
               </div>
             </div>
-            <div class="mb-4">
-              <h3 class="font-medium mb-1">Clone Detection Analysis</h3>
-              <span>{{analysisResult.cloneDetection}}</span>
+            
+            <!-- Clone Detection Analysis Section -->
+            <div class="result-section mb-4" [ngClass]="{'result-section-critical': analysisResult.cloneCount > 0}">
+              <h3 class="section-header">Clone Detection Analysis:</h3>
+              <p>{{analysisResult.cloneDetection}}</p>
+              <p *ngIf="analysisResult.cloneCount > 0" class="mt-1 text-sm text-gray-600">
+                Significant number of copy-paste regions detected, suggesting manipulation.
+              </p>
             </div>
-            <div class="mb-4">
-              <h3 class="font-medium mb-1">EXIF Metadata Analysis</h3>
-              <span>{{analysisResult.exifAnalysis}}</span>
+            
+            <!-- EXIF Metadata Analysis Section -->
+            <div class="result-section mb-4" [ngClass]="{'result-section-critical': !analysisResult.exifAnalysis.includes('consistent')}">
+              <h3 class="section-header">EXIF Metadata Analysis:</h3>
+              <p>{{analysisResult.exifAnalysis}}</p>
             </div>
-            <div>
-              <h3 class="font-medium mb-1">Indicators found:</h3>
-              <span>{{analysisResult.indicatorsFound}}</span>
+            
+            <!-- Indicators Section -->
+            <div class="result-section mb-4">
+              <h3 class="section-header"><span class="indicator-value">{{analysisResult.detailedIndicators[4]}}</span></h3>
+              <p *ngIf="analysisResult.indicatorsFound === 0" class="text-gray-600">No manipulation indicators detected in this image.</p>
             </div>
+            
+            
+            
           </div>
         </div>
         <!-- Right Column: Tabs and Tab Content -->

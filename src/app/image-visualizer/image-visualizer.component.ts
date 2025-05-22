@@ -22,11 +22,14 @@ interface ImageMetadata {
 
 interface AnalysisResult {
   overallAssessment: string;
+  manipulationProbabilityPercent: string;
   summary: string;
   manipulationProbability: number;
   cloneDetection: string;
+  cloneCount: number;
   exifAnalysis: string;
   indicatorsFound: number;
+  detailedIndicators: string[];
 }
 
 interface AnalyzeResponse {
@@ -86,11 +89,14 @@ export class ImageVisualizerComponent implements OnInit {
   
   analysisResult: AnalysisResult = {
     overallAssessment: '',
+    manipulationProbabilityPercent: '',
     summary: '',
     manipulationProbability: 0,
     cloneDetection: '',
+    cloneCount: 0,
     exifAnalysis: '',
-    indicatorsFound: 0
+    indicatorsFound: 0,
+    detailedIndicators: []
   };
   
   elaImage: string | null = null;
@@ -189,11 +195,14 @@ export class ImageVisualizerComponent implements OnInit {
     // Reset analysis results
     this.analysisResult = {
       overallAssessment: '',
+      manipulationProbabilityPercent: '',
       summary: '',
       manipulationProbability: 0,
       cloneDetection: '',
+      cloneCount: 0,
       exifAnalysis: '',
-      indicatorsFound: 0
+      indicatorsFound: 0,
+      detailedIndicators: []
     };
     
     // Reset metadata
@@ -215,56 +224,96 @@ export class ImageVisualizerComponent implements OnInit {
     event.preventDefault();
   }
 
-  async analyzeImage(): Promise<void> {
+  analyzeImage(): Promise<void> {
     if (!this.originalImage || !this.currentFile) {
       this.showToast('Please upload an image first', 'error');
-      return;
+      return Promise.resolve();
     }
 
     this.isLoading = true;
 
     try {
       // Use the existing imageService with the proper method signature
-      const response = await firstValueFrom(
+      return firstValueFrom(
         this.imageService.analyzeImage(this.currentFile).pipe(
           map(res => res.body as AnalyzeResponse)
         )
-      );
-      
-      this.analysisResult.manipulationProbability = response.manipulation_probability || 0;
-      this.analysisResult.summary = response.analysis_text || '';
-      this.analysisResult.indicatorsFound = response.clone_count || 0;
-      
-      if (response.manipulation_probability < 0.3) {
-        this.analysisResult.overallAssessment = 'Low Risk';
-      } else if (response.manipulation_probability < 0.6) {
-        this.analysisResult.overallAssessment = 'Medium Risk';
-      } else {
-        this.analysisResult.overallAssessment = 'High Risk';
-      }
+      ).then(response => {
+        this.analysisResult.manipulationProbability = response.manipulation_probability || 0;
+        this.analysisResult.manipulationProbabilityPercent = 
+          `${(response.manipulation_probability * 100).toFixed(1)}%`;
+        this.analysisResult.summary = response.analysis_text || '';
+        this.analysisResult.cloneCount = response.clone_count || 0;
+        this.analysisResult.indicatorsFound = response.clone_count || 0;
+        
+        if (response.manipulation_probability < 0.3) {
+          this.analysisResult.overallAssessment = 'Low Risk';
+        } else if (response.manipulation_probability < 0.6) {
+          this.analysisResult.overallAssessment = 'Medium Risk';
+        } else {
+          this.analysisResult.overallAssessment = 'High Risk';
+        }
 
-      if (response.clone_count > 0) {
-        this.analysisResult.cloneDetection = 'Clone artifacts detected';
-      } else {
-        this.analysisResult.cloneDetection = 'No clone artifacts detected';
-      }
+        if (response.clone_count > 0) {
+          this.analysisResult.cloneDetection = 
+            `Found ${response.clone_count} potential cloned regions in the image.`;
+          if (response.clone_count > 1000) {
+            this.analysisResult.cloneDetection += ' Significant number of copy-paste regions detected.';
+          }
+        } else {
+          this.analysisResult.cloneDetection = 'No clone artifacts detected';
+        }
 
-      this.analysisResult.exifAnalysis = 'EXIF data appears consistent';
-      
-      // Update the visualizations
-      this.elaImage = this.ensureBase64Prefix(response.ela_image || '');
-      this.noiseImage = this.ensureBase64Prefix(response.noise_image || '');
-      this.cloneImage = this.ensureBase64Prefix(response.clone_image || '');
-      this.aiHeatmapImage = this.ensureBase64Prefix(response.heatmap_image || '');
+        // Check if EXIF data exists
+        const hasExif = response.exif_data && Object.keys(response.exif_data).length > 0;
+        this.analysisResult.exifAnalysis = hasExif ? 
+          'EXIF metadata appears consistent' : 'No EXIF metadata found';
+        
+        // Set detailed indicators
+        this.analysisResult.detailedIndicators = [];
+        if (!hasExif) {
+          this.analysisResult.detailedIndicators.push('No EXIF metadata available');
+        }
+        
+        // Add more indicators based on analysis
+        if (response.clone_count > 0) {
+          this.analysisResult.detailedIndicators.push(`${response.clone_count} potential cloned regions detected`);
+        }
+        
+        // Add additional analysis indicators from the text
+        if (this.analysisResult.summary) {
+          const lines = this.analysisResult.summary.split('\n').filter(line => line.trim());
+          lines.forEach(line => {
+            if (line.includes('indicator') || line.includes('detect') || line.includes('found')) {
+              this.analysisResult.detailedIndicators.push(line.trim());
+            }
+          });
+        }
+        
+        // Remove any duplicate indicators
+        this.analysisResult.detailedIndicators = [...new Set(this.analysisResult.detailedIndicators)];
+        
+        // Update the visualizations
+        this.elaImage = this.ensureBase64Prefix(response.ela_image || '');
+        this.noiseImage = this.ensureBase64Prefix(response.noise_image || '');
+        this.cloneImage = this.ensureBase64Prefix(response.clone_image || '');
+        this.aiHeatmapImage = this.ensureBase64Prefix(response.heatmap_image || '');
 
-      setTimeout(() => {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 500);
+      }).catch(error => {
+        console.error('Analysis error:', error);
+        this.showToast('Error analyzing image', 'error');
         this.isLoading = false;
-      }, 500);
+        return Promise.reject(error);
+      });
       
     } catch (error) {
       console.error('Analysis error:', error);
       this.showToast('Error analyzing image', 'error');
       this.isLoading = false;
+      return Promise.reject(error);
     }
   }
 
